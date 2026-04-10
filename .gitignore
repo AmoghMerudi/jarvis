@@ -1,0 +1,78 @@
+# ── Environment variables ───────────────────────────────
+backend/.env
+frontend/.env.local
+.env
+.env.*
+
+# ── Python ──────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+venv/
+.venv/
+env/
+ENV/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+
+# ── Alembic ─────────────────────────────────────────────
+backend/alembic/versions/*.pyc
+
+# ── Node / Next.js ──────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.vercel
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# ── OS ──────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── IDEs ────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Whisper model cache ──────────────────────────────────
+~/.cache/whisper/
+
+# ── Logs ────────────────────────────────────────────────
+*.log
+logs/

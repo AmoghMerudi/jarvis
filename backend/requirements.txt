@@ -1,0 +1,44 @@
+# Web framework
+fastapi
+uvicorn[standard]
+
+# Pydantic & config
+pydantic
+pydantic-settings
+python-dotenv
+
+# Database
+asyncpg
+sqlalchemy[asyncio]
+alembic
+pgvector
+
+# LLM providers
+anthropic
+openai
+google-generativeai
+groq
+ollama
+
+# Voice — STT (requires Python <=3.12; skip on 3.13+)
+# openai-whisper
+
+# Voice — TTS
+pyttsx3
+elevenlabs
+
+# Scheduler
+apscheduler
+
+# HTTP client
+httpx
+
+# System tools
+psutil
+
+# File tools
+aiofiles
+pillow
+
+# Utilities
+numpy
