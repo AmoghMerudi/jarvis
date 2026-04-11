@@ -1,14 +1,15 @@
 import os
 from typing import Any
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 from providers.base import BaseProvider
 
 
 class GeminiProvider(BaseProvider):
     def __init__(self) -> None:
-        genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+        self._client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         self._model_name = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash")
 
     async def chat(
@@ -17,19 +18,25 @@ class GeminiProvider(BaseProvider):
         system: str,
         tools: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
-        model = genai.GenerativeModel(
-            model_name=self._model_name,
-            system_instruction=system,
-        )
-        # Convert messages to Gemini format
-        gemini_messages = [
-            {"role": m["role"], "parts": [m["content"]]} for m in messages
+        gemini_contents = [
+            types.Content(
+                role=m["role"],
+                parts=[types.Part(text=m["content"])],
+            )
+            for m in messages
         ]
-        response = await model.generate_content_async(gemini_messages)
+        config = types.GenerateContentConfig(system_instruction=system)
+
+        response = await self._client.aio.models.generate_content(
+            model=self._model_name,
+            contents=gemini_contents,
+            config=config,
+        )
         return {"text": response.text, "raw": str(response)}
 
     async def embed(self, text: str) -> list[float]:
-        result = genai.embed_content(
-            model="models/text-embedding-004", content=text
+        response = await self._client.aio.models.embed_content(
+            model="text-embedding-004",
+            contents=text,
         )
-        return result["embedding"]
+        return response.embeddings[0].values

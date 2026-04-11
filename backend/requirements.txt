@@ -16,12 +16,12 @@ pgvector
 # LLM providers
 anthropic
 openai
-google-generativeai
+google-genai
 groq
 ollama
 
-# Voice — STT (requires Python <=3.12; skip on 3.13+)
-# openai-whisper
+# Voice — STT
+openai-whisper
 
 # Voice — TTS
 pyttsx3
