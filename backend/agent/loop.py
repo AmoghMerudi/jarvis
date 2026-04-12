@@ -14,8 +14,14 @@ async def run_agent(
     user_message: str,
     history: list[dict[str, Any]],
 ) -> str:
-    facts_str = await get_all_facts()
-    memories_str = await retrieve_memories(user_message)
+    try:
+        facts_str = await get_all_facts()
+    except Exception:
+        facts_str = "No explicit facts stored yet."
+    try:
+        memories_str = await retrieve_memories(user_message)
+    except Exception:
+        memories_str = "No relevant memories found."
     system = build_system_prompt(
         date=date.today().isoformat(),
         facts=facts_str,

@@ -18,13 +18,18 @@ class GeminiProvider(BaseProvider):
         system: str,
         tools: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
-        gemini_contents = [
-            types.Content(
-                role=m["role"],
-                parts=[types.Part(text=m["content"])],
+        gemini_contents = []
+        for m in messages:
+            if m["role"] == "tool":
+                # Tool result messages are not forwarded in Phase 1
+                continue
+            role = "model" if m["role"] == "assistant" else m["role"]
+            gemini_contents.append(
+                types.Content(
+                    role=role,
+                    parts=[types.Part(text=m["content"])],
+                )
             )
-            for m in messages
-        ]
         config = types.GenerateContentConfig(system_instruction=system)
 
         response = await self._client.aio.models.generate_content(

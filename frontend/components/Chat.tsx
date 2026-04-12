@@ -59,7 +59,7 @@ export default function Chat() {
           placeholder="Message Jarvis…"
           className="flex-1 bg-gray-800 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <VoiceButton onTranscript={(text) => { setInput(text); send(text); }} />
+        <VoiceButton onTranscript={(text) => { setInput(""); send(text); }} />
         <button
           type="submit"
           disabled={loading || !input.trim()}
