@@ -59,8 +59,12 @@ class OllamaProvider(BaseProvider):
         }
 
     async def embed(self, text: str) -> list[float]:
-        payload = {"model": self._embed_model, "prompt": text}
+        payload = {"model": self._embed_model, "input": text}
         async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.post(f"{self._base_url}/api/embeddings", json=payload)
+            response = await client.post(f"{self._base_url}/api/embed", json=payload)
             response.raise_for_status()
-            return response.json()["embedding"]
+            data = response.json()
+            # /api/embed returns {"embeddings": [[...]]}, /api/embeddings returned {"embedding": [...]}
+            if "embeddings" in data:
+                return data["embeddings"][0]
+            return data["embedding"]

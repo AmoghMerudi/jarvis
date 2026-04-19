@@ -5,7 +5,7 @@ from typing import Any
 from agent.prompts import build_system_prompt
 from agent.tools import PermissionDenial, execute_tool, get_tool_schemas
 from memory.facts import get_all_facts
-from memory.semantic import retrieve_memories
+from memory.semantic import retrieve_memories, store_memory
 from providers import get_provider
 
 
@@ -76,8 +76,10 @@ async def run_agent(
 
         tool_calls = response.get("tool_calls", [])
         if not tool_calls:
+            output = response.get("text", "")
+            await _auto_store_exchange(user_message, output)
             return TurnResult(
-                output=response.get("text", ""),
+                output=output,
                 stop_reason="completed",
                 usage=usage,
                 permission_denials=tuple(denials),
@@ -105,3 +107,12 @@ async def run_agent(
         permission_denials=tuple(denials),
         turns_taken=config.max_turns,
     )
+
+
+async def _auto_store_exchange(user_message: str, reply: str) -> None:
+    """Store a brief record of each exchange so Jarvis can recall past conversations."""
+    try:
+        summary = f"User: {user_message[:300]}\nJarvis: {reply[:300]}"
+        await store_memory(summary)
+    except Exception:
+        pass  # never block a response because memory storage failed

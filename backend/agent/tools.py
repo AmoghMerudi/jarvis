@@ -44,3 +44,4 @@ def load_all_tools() -> None:
     import tools.system  # noqa: F401
     import tools.files  # noqa: F401
     import tools.web_search  # noqa: F401
+    import tools.memory  # noqa: F401
