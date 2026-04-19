@@ -16,14 +16,15 @@ export default function VoiceButton({ onTranscript }: Props) {
       onMouseUp={stopRecording}
       onTouchStart={startRecording}
       onTouchEnd={stopRecording}
-      className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-        recording
-          ? "bg-red-600 hover:bg-red-500"
-          : "bg-gray-700 hover:bg-gray-600"
-      }`}
-      title={recording ? "Release to send" : "Hold to speak"}
+      className="shrink-0 transition-colors text-xs px-2 py-1 rounded"
+      style={{
+        background: recording ? "var(--accent-dim)" : "transparent",
+        color: recording ? "var(--accent)" : "var(--text-dim)",
+        border: `1px solid ${recording ? "var(--accent)" : "var(--border)"}`,
+      }}
+      title={recording ? "release to send" : "hold to speak"}
     >
-      {recording ? "●" : "🎙"}
+      {recording ? "● rec" : "mic"}
     </button>
   );
 }

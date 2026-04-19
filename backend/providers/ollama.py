@@ -10,7 +10,7 @@ from providers.base import BaseProvider
 class OllamaProvider(BaseProvider):
     def __init__(self) -> None:
         self._base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-        self._model = os.environ.get("OLLAMA_MODEL", "llama3.1:8b")
+        self._model = os.environ.get("OLLAMA_MODEL", "llama3.2:3b")
         self._embed_model = os.environ.get("EMBEDDING_MODEL", "nomic-embed-text")
 
     async def chat(
@@ -23,6 +23,11 @@ class OllamaProvider(BaseProvider):
             "model": self._model,
             "messages": [{"role": "system", "content": system}] + messages,
             "stream": False,
+            "keep_alive": "24h",
+            "options": {
+                "num_ctx": 4096,
+                "num_predict": 512,
+            },
         }
         if tools:
             payload["tools"] = tools

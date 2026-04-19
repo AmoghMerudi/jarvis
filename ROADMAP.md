@@ -14,19 +14,19 @@ If you're going full-time on it, cut estimates in half.
 **Goal:** Repo is scaffolded, environment works, you can run the project.
 **Time:** 2–4 hours
 
-- [ ] Create monorepo: `jarvis/backend/` and `jarvis/frontend/`
-- [ ] Init git repo, add `.gitignore` (exclude `.env`, `__pycache__`, `.next`, `node_modules`)
-- [ ] Write `docker-compose.yml` for Postgres + pgvector
+- [x] Create monorepo: `jarvis/backend/` and `jarvis/frontend/`
+- [x] Init git repo, add `.gitignore` (exclude `.env`, `__pycache__`, `.next`, `node_modules`)
+- [x] Write `docker-compose.yml` for Postgres + pgvector
   - ↳ Test: `docker-compose up -d` runs without errors
 - [ ] Create `backend/.env` from `.env.example`, fill in at least one LLM provider key
-- [ ] Set up Python venv, install base deps (`fastapi`, `uvicorn`, `pydantic`, `asyncpg`, `alembic`)
-- [ ] Set up Next.js 14 with TypeScript + Tailwind
+- [x] Set up Python venv, install base deps (`fastapi`, `uvicorn`, `pydantic`, `asyncpg`, `alembic`)
+- [x] Set up Next.js 14 with TypeScript + Tailwind
   - ↳ Test: `npm run dev` shows default page
-- [ ] Write `backend/db/connection.py` — async Postgres connection via asyncpg
+- [x] Write `backend/db/connection.py` — async Postgres connection via asyncpg
 - [ ] Write `backend/db/models.py` — define tables (memories, facts, conversations)
-- [ ] Run `alembic init` + write first migration
+- [x] Run `alembic init` + write first migration
   - ↳ Test: `alembic upgrade head` creates tables in DB
-- [ ] Confirm pgvector extension installs: `CREATE EXTENSION vector;`
+- [x] Confirm pgvector extension installs: `CREATE EXTENSION vector;`
 
 ---
 
@@ -35,25 +35,25 @@ If you're going full-time on it, cut estimates in half.
 **Time:** 1 weekend
 
 ### Backend
-- [ ] Write `backend/providers/base.py` — `BaseProvider` abstract class
-- [ ] Write `backend/providers/gemini.py` — first working provider
+- [x] Write `backend/providers/base.py` — `BaseProvider` abstract class
+- [x] Write `backend/providers/gemini.py` — first working provider
   - ↳ Test: call it directly in a script, get a response back
-- [ ] Write `backend/providers/__init__.py` — `get_provider()` factory
-- [ ] Write `backend/agent/prompts.py` — base system prompt for Jarvis personality
-- [ ] Write `backend/agent/loop.py` — bare agent loop (no tools, no memory yet)
+- [x] Write `backend/providers/__init__.py` — `get_provider()` factory
+- [x] Write `backend/agent/prompts.py` — base system prompt for Jarvis personality
+- [x] Write `backend/agent/loop.py` — bare agent loop (no tools, no memory yet)
   - Input: user message + conversation history
   - Output: assistant response string
-- [ ] Write `backend/main.py` — FastAPI app with `POST /chat` endpoint
+- [x] Write `backend/main.py` — FastAPI app with `POST /chat` endpoint
   - ↳ Test: `curl -X POST /chat -d '{"message": "hello"}'` returns response
 - [ ] Add SSE streaming to `/chat` — yield tokens as they arrive
   - ↳ Test: response streams in terminal
 
 ### Frontend
-- [ ] Build `frontend/lib/api.ts` — typed API client for backend
-- [ ] Build `frontend/hooks/useChat.ts` — manages message state + API calls
-- [ ] Build `frontend/components/Chat.tsx` — message list + input box
+- [x] Build `frontend/lib/api.ts` — typed API client for backend
+- [x] Build `frontend/hooks/useChat.ts` — manages message state + API calls
+- [x] Build `frontend/components/Chat.tsx` — message list + input box
 - [ ] Wire SSE streaming into chat UI — tokens appear in real time
-- [ ] Build `frontend/app/page.tsx` — render Chat component
+- [x] Build `frontend/app/page.tsx` — render Chat component
   - ↳ Test: full conversation works end to end in browser
 
 ---
@@ -62,16 +62,16 @@ If you're going full-time on it, cut estimates in half.
 **Goal:** All 5 providers work. Swapping `LLM_PROVIDER` in `.env` just works.
 **Time:** 3–5 days
 
-- [ ] Write `backend/providers/claude.py` — Anthropic provider
+- [x] Write `backend/providers/claude.py` — Anthropic provider
   - ↳ Test: set `LLM_PROVIDER=claude`, chat works
-- [ ] Write `backend/providers/openai.py` — OpenAI provider
+- [x] Write `backend/providers/openai.py` — OpenAI provider
   - ↳ Test: set `LLM_PROVIDER=openai`, chat works
-- [ ] Write `backend/providers/groq.py` — Groq provider (OpenAI-compatible)
+- [x] Write `backend/providers/groq.py` — Groq provider (OpenAI-compatible)
   - ↳ Test: set `LLM_PROVIDER=groq`, chat works
-- [ ] Write `backend/providers/ollama.py` — local Ollama provider
+- [x] Write `backend/providers/ollama.py` — local Ollama provider
   - ↳ Test: `ollama pull llama3.1`, set `LLM_PROVIDER=ollama`, chat works
-- [ ] Add provider info endpoint `GET /provider` — returns current active model
-- [ ] Show active model name in frontend UI (small badge, bottom corner)
+- [ ] Add provider info endpoint `GET /provider` — returns current active model *(today: `GET /health` includes `provider` + `model` for the UI)*
+- [x] Show active model name in frontend UI (small badge, bottom corner)
 
 ---
 
@@ -81,21 +81,21 @@ If you're going full-time on it, cut estimates in half.
 
 ### Semantic Memory
 - [ ] Pull `nomic-embed-text` via Ollama: `ollama pull nomic-embed-text`
-- [ ] Write `backend/memory/semantic.py`
-  - `store_memory(content, source)` — embed + insert into pgvector
-  - `search_memories(query, top_k=5)` — cosine similarity search
+- [x] Write `backend/memory/semantic.py`
+  - `store_memory(content)` — embed + insert into pgvector *(no `source` param yet)*
+  - `retrieve_memories(query, top_k)` — cosine similarity search *(roadmap name: `search_memories`)*
   - ↳ Test: store 5 memories, search returns relevant ones
 - [ ] Write conversation summarizer — summarize last N turns into a memory
 - [ ] Wire into agent loop — after every 10 turns, summarize + store
 
 ### Explicit Facts
-- [ ] Write `backend/memory/facts.py`
+- [x] Write `backend/memory/facts.py`
   - `set_fact(key, value)`
   - `get_fact(key)`
   - `get_all_facts()` → dict
 - [ ] Write fact-extraction logic — detect when user states a personal fact
   - e.g. "my name is X", "I wake up at Y", "I work at Z"
-- [ ] Wire facts + semantic memories into system prompt on every request
+- [x] Wire facts + semantic memories into system prompt on every request
   - ↳ Test: tell Jarvis your name, start new conversation, it remembers
 
 ---
@@ -105,25 +105,25 @@ If you're going full-time on it, cut estimates in half.
 **Time:** 1 weekend
 
 ### STT — Whisper
-- [ ] Install Whisper + ffmpeg
-- [ ] Write `backend/voice/stt.py` — load model at startup, transcribe audio
+- [x] Install Whisper + ffmpeg
+- [x] Write `backend/voice/stt.py` — load model at startup, transcribe audio
 - [ ] Add `POST /voice/transcribe` endpoint — accepts audio blob, returns text
   - ↳ Test: send a `.wav` file, get transcript back
 
 ### TTS
-- [ ] Write `backend/voice/tts.py`
+- [x] Write `backend/voice/tts.py`
   - Try ElevenLabs first if key exists
   - Fall back to `pyttsx3` if no key
 - [ ] Add `POST /voice/speak` endpoint — accepts text, streams audio back
 - [ ] Add markdown stripper before TTS (remove `**`, code blocks, etc.)
 
 ### Frontend Voice UI
-- [ ] Build `frontend/components/VoiceButton.tsx` — push-to-talk button
-- [ ] Build `frontend/hooks/useVoice.ts`
+- [x] Build `frontend/components/VoiceButton.tsx` — push-to-talk button
+- [x] Build `frontend/hooks/useVoice.ts`
   - Record audio via `MediaRecorder`
   - POST to `/voice/transcribe`
   - Auto-submit transcript to chat
-- [ ] Build `frontend/components/AudioVisualizer.tsx` — waveform during recording/playback
+- [x] Build `frontend/components/AudioVisualizer.tsx` — waveform during recording/playback
 - [ ] Wire TTS playback — after response, POST to `/voice/speak`, play audio
   - ↳ Test: speak a question, hear the answer
 
@@ -141,6 +141,7 @@ If you're going full-time on it, cut estimates in half.
   - `get_ip()` — local + public IP
   - `get_hostname()`
   - ↳ Uses: `psutil`, `socket`, `platform`
+  - *Repo today: `battery_status` + `ram_usage` tools only.*
 - [ ] Write `backend/tools/network.py`
   - `run_speedtest()` — download/upload speed via `speedtest-cli`
   - `scan_network()` — active devices on LAN via `nmap`
@@ -149,8 +150,8 @@ If you're going full-time on it, cut estimates in half.
 - [ ] Write `backend/tools/screenshot.py`
   - `take_screenshot()` — saves to `/tmp/`, returns path
   - `open_camera()` — capture from webcam via `opencv`
-- [ ] Register all tools in `backend/agent/tools.py`
-  - ↳ Test: ask "what's my battery?" — correct answer
+- [x] Register all tools in `backend/agent/tools.py`
+  - ↳ Test: ask "what's my battery?" — correct answer *(system + files + web_search registered)*
 
 ### 5B — File & Image Tools
 - [ ] Write `backend/tools/files.py`
@@ -159,6 +160,7 @@ If you're going full-time on it, cut estimates in half.
   - `search_files(query, directory)` — find files by name/content
   - `organize_files(directory)` — sort files into subfolders by type
   - `delete_file(path)` — with confirmation flag
+  - *(partial: list/read/delete implemented; search/organize not yet)*
 - [ ] Write `backend/tools/images.py`
   - `compress_image(path, quality)` — via `Pillow`
   - `convert_image(path, format)` — jpg/png/webp
@@ -211,7 +213,7 @@ If you're going full-time on it, cut estimates in half.
 **Goal:** Jarvis alerts you without you asking. Deadlines, weather, reminders.
 **Time:** 3–5 days
 
-- [ ] Install APScheduler: `pip install apscheduler`
+- [x] Install APScheduler: `pip install apscheduler`
 - [ ] Write `backend/scheduler/jobs.py`
   - `check_deadlines()` — runs every morning, scans calendar for events in next 48h
   - `check_weather()` — morning briefing if rain/snow forecast
@@ -250,10 +252,10 @@ These need no external APIs — just good prompting and optionally a code execut
 **Goal:** It looks like something you'd actually want to open every day.
 **Time:** 1 weekend
 
-- [ ] Design final chat UI — dark theme, clean typography, message bubbles
-- [ ] Add sidebar — conversation history, active model badge, settings
+- [x] Design final chat UI — dark theme, clean typography, message bubbles
+- [x] Add sidebar — conversation history, active model badge, settings *(model/provider from `/health`; session list is a stub)*
 - [ ] Polish audio visualizer — smooth waveform animation
-- [ ] Add loading states — typing indicator while Jarvis thinks
+- [x] Add loading states — typing indicator while Jarvis thinks
 - [ ] Add tool execution indicators — "Searching the web...", "Checking calendar..."
 - [ ] Add settings panel — swap LLM provider from UI (writes to `.env`, restarts backend)
 - [ ] Add onboarding flow — first run asks your name, timezone, preferences → stores as facts

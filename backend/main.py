@@ -61,5 +61,21 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
-    return {"status": "ok"}
+async def health() -> dict[str, Any]:
+    import os
+    provider_name = os.getenv("LLM_PROVIDER", "unknown")
+    model_map = {
+        "claude": os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"),
+        "openai": os.getenv("OPENAI_MODEL", "gpt-4o"),
+        "gemini": os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+        "groq": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        "ollama": os.getenv("OLLAMA_MODEL", "llama3.2:3b"),
+    }
+    model = model_map.get(provider_name, "unknown")
+    return {
+        "status": "ok",
+        "provider": provider_name,
+        "model": model,
+        "memory": False,
+        "voice": False,
+    }

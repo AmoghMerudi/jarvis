@@ -7,7 +7,11 @@ const config: Config = {
     "./hooks/**/*.{ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        mono: ["var(--font-mono)", "JetBrains Mono", "Fira Code", "ui-monospace", "monospace"],
+      },
+    },
   },
   plugins: [],
 };
