@@ -1,9 +1,11 @@
 import logging
 from contextlib import asynccontextmanager
+from functools import partial
 from typing import Any
+import asyncio
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, HTTPException
 
 load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +14,7 @@ from pydantic import BaseModel
 from agent.loop import run_agent
 from agent.tools import load_all_tools
 from db.connection import init_db
+from voice.stt import transcribe
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +63,20 @@ async def chat(request: ChatRequest) -> ChatResponse:
     )
 
 
+@app.post("/voice/transcribe")
+async def voice_transcribe(audio: UploadFile = File(...)) -> dict[str, str]:
+    audio_bytes = await audio.read()
+    if not audio_bytes:
+        raise HTTPException(status_code=400, detail="Empty audio file")
+
+    filename = audio.filename or "audio.webm"
+    extension = filename.rsplit(".", 1)[-1] if "." in filename else "webm"
+
+    loop = asyncio.get_event_loop()
+    text = await loop.run_in_executor(None, partial(transcribe, audio_bytes, extension))
+    return {"text": text}
+
+
 @app.get("/health")
 async def health() -> dict[str, Any]:
     import os
@@ -76,6 +93,6 @@ async def health() -> dict[str, Any]:
         "status": "ok",
         "provider": provider_name,
         "model": model,
-        "memory": False,
-        "voice": False,
+        "memory": True,
+        "voice": True,
     }
