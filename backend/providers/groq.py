@@ -23,7 +23,19 @@ class GroqProvider(BaseProvider):
             kwargs["tools"] = tools
 
         response = await self._client.chat.completions.create(**kwargs)
-        return response.model_dump()
+        choice = response.choices[0]
+        text = choice.message.content or ""
+        u = response.usage
+        return {
+            "text": text,
+            "tool_calls": [],
+            "stop_reason": choice.finish_reason,
+            "usage": {
+                "input_tokens": u.prompt_tokens if u else 0,
+                "output_tokens": u.completion_tokens if u else 0,
+            },
+            "raw_assistant_message": {"role": "assistant", "content": text},
+        }
 
     async def embed(self, text: str) -> list[float]:
         raise NotImplementedError("Groq does not provide an embeddings endpoint.")

@@ -1,4 +1,12 @@
+from dataclasses import dataclass
 from typing import Any, Callable, Awaitable
+
+
+@dataclass(frozen=True)
+class PermissionDenial:
+    tool_name: str
+    reason: str
+
 
 # Registry: tool_name → (schema, handler)
 _registry: dict[str, tuple[dict[str, Any], Callable[..., Awaitable[str]]]] = {}
@@ -24,9 +32,9 @@ def get_tool_schemas() -> list[dict[str, Any]]:
     return [schema for schema, _ in _registry.values()]
 
 
-async def execute_tool(name: str, tool_input: dict[str, Any]) -> str:
+async def execute_tool(name: str, tool_input: dict[str, Any]) -> str | PermissionDenial:
     if name not in _registry:
-        return f"Error: unknown tool '{name}'"
+        return PermissionDenial(tool_name=name, reason=f"unknown tool '{name}'")
     _, handler = _registry[name]
     return await handler(**tool_input)
 

@@ -12,7 +12,11 @@ class BaseProvider(ABC):
         system: str,
         tools: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
-        """Send a chat request and return the raw response dict."""
+        """Send a chat request and return a canonical envelope:
+        {"text": str, "tool_calls": list, "stop_reason": str,
+         "usage": {"input_tokens": int, "output_tokens": int},
+         "raw_assistant_message": dict}
+        """
         ...
 
     @abstractmethod

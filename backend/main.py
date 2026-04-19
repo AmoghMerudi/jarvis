@@ -2,7 +2,10 @@ import logging
 from contextlib import asynccontextmanager
 from typing import Any
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
+
+load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -27,8 +30,7 @@ app = FastAPI(title="Jarvis", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -41,12 +43,21 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     reply: str
+    stop_reason: str
+    usage: dict[str, int]
 
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
-    reply = await run_agent(request.message, request.history)
-    return ChatResponse(reply=reply)
+    result = await run_agent(request.message, request.history)
+    return ChatResponse(
+        reply=result.output,
+        stop_reason=result.stop_reason,
+        usage={
+            "input_tokens": result.usage.input_tokens,
+            "output_tokens": result.usage.output_tokens,
+        },
+    )
 
 
 @app.get("/health")
